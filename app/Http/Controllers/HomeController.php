@@ -6,7 +6,8 @@ use App\Models\bill;
 use App\Models\couries;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
-
+use App\Exports\CouriersExport;
+use Maatwebsite\Excel\Facades\Excel;
 class HomeController extends Controller
 {
     /**
@@ -109,7 +110,7 @@ class HomeController extends Controller
 
     public function GetCourier(Request $req)
     {
-        if($req->billid)
+        if($req->billid && $req->billid!="null" && $req->billid!=null)
         {
             $c=new couries;
             $couriers=$c->where("billid",$req->billid)->get()->toArray();
@@ -117,14 +118,14 @@ class HomeController extends Controller
             if(!(count($couriers)>=1))
             {
                 $tabledata='
-            <thead>
-                <th>SI.NO</th>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>From</th>
-                <th>To</th>
-            </thead>
+                <div class="table-dark">
+                <th scope="col">SI.NO</th>
+                <th scope="col">ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">Amount</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+            </div>
             <tbody>
             <tr>
             <td colspan="6"><b>No Courier Data Found For Bill [ '.bill::find($req->billid)->toArray()["billname"].' ]</b></td>
@@ -136,31 +137,31 @@ class HomeController extends Controller
             }
             else{
 
-                $tabledata="
-            <thead>
-                <th>SI.NO</th>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>From</th>
-                <th>To</th>
+                $tabledata='
+            <thead class="table-dark">
+                <th scope="col">SI.NO</th>
+                <th scope="col">ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">Amount</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
             </thead>
             <tbody>
-            ";
+            ';
             $count=1;
             foreach($couriers as $courier)
             {
                 // dd($courier["cdate"]);
-                $tabledata.="
-                <tr>
-                <td>".$count."</td>
-                <td>".$courier["cid"]."</td>
-                <td>".$courier["cdate"]."</td>
-                <td>".$courier["amount"]."</td>
-                <td>".$courier["cfrom"]."</td>
-                <td>".$courier["cto"]."</td>
+                $tabledata.='
+                <tr scope="row">
+                <th scope="row">'.$count.'</th>
+                <td>'.$courier['cid'].'</td>
+                <td>'.$courier['cdate'].'</td>
+                <td>'.$courier['amount'].'</td>
+                <td>'.$courier['cfrom'].'</td>
+                <td>'.$courier['cto'].'</td>
                 </tr>
-                ";
+                ';
                 $count++;
             }
             $tabledata.="</tbody>";
@@ -170,7 +171,22 @@ class HomeController extends Controller
 
         }
         else{
-            return response(["message"=>"Invalid Request"]);
+            $tabledata='
+            <thead>
+                <th>SI.NO</th>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>From</th>
+                <th>To</th>
+            </thead>
+            <tbody>
+            <tr>
+            <td colspan="6"><b>Select Bill From DropDown</b></td>
+            </tr>
+            </tbody>
+            ';
+            return response(["message"=>"Select Bill From DropDown","data"=>$tabledata]);
         }
     }
 
@@ -188,8 +204,7 @@ class HomeController extends Controller
         }
         else{
 
-            $tabledata="
-        ";
+            $tabledata='<option value="null">Select Bill</option>';
         $count=1;
         foreach($bills as $bill)
         {
@@ -229,7 +244,44 @@ class HomeController extends Controller
 
     }
 
+    public function DeteteBill(Request $req)
+    {
+        if($req->billid)
+        {
+            try {
+                //code...
+                bill::find($req->billid)->delete();
+            } catch (\Throwable $th) {
+                //throw $th;
+                return response(["message"=>$th->getMessage(),"data"=>null]);
+            }
+            return response(["message"=>"Bill Sucessfully Deleted","data"=>null]);
+        }
+        else{
+            return response(["message"=>"Bill Not Valid","data"=>null]);
+        }
+    }
 
+    public function export(Request $req)
+    {
+
+        if($req->billid && $req->billid!="null" && $req->billid!=null)
+        {
+            return Excel::download(new CouriersExport($req->billid), 'CourierBill.xlsx');
+            // return response(["message"=>"Downloading Courier Data..","data"=>Excel::download(new CouriersExport($req->billid), 'CourierBill.xlsx')]);
+        }
+        else{
+            return response(["message"=>"Select Bill From DropDown","data"=>null]);
+        }
+
+
+    }
+
+
+    public function isCourierExists(Request $req)
+    {
+        return couries::where('cid',$req->cid)->count()==1? response(["message"=>"Courier Alredy Exists","data"=>true]):response(["message"=>"Courier Not Found","data"=>false]);
+    }
 
 
 }
