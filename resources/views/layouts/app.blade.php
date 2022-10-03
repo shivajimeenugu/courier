@@ -10,24 +10,40 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<style>
 
+    .optionhoverred:hover{
+        color: red;
+    }
+    .optionhoverblue:hover{
+        color: blue;
+    }
+    .greentick{
+        color: green;
+    }
+
+    .redtick{
+        color: red;
+    }
+
+</style>
 
 </head>
 <body>
     <div id="app">
 
 
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar  navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -98,7 +114,7 @@
               {
                 $.ajax({
                 type: 'GET',
-                url: "http://127.0.0.1:8000/api/createbill?billname="+billname,
+                url: "/api/createbill?billname="+billname,
                 success:function(data){
                 // $('#courierdatatable').html(data["data"]);
                  console.log(data["message"]);
@@ -113,7 +129,7 @@
             else{
             $.ajax({
                 type: 'GET',
-                url: "http://127.0.0.1:8000/api/getcourier?billid="+id,
+                url: "/api/getcourier?billid="+id,
                 success:function(data){
                     $('#billtitle').html(data["message"]);
                 $('#courierdatatable').html(data["data"]);
@@ -127,7 +143,7 @@
         {
             $.ajax({
                 type: 'GET',
-                url: "http://127.0.0.1:8000/api/getbills",
+                url: "/api/getbills",
                 success:function(data){
 
                 $('#billsselect').html(data["data"]);
@@ -142,7 +158,7 @@
             // alert(billid+"---"+awb)
             $.ajax({
                 type: 'GET',
-                url: "http://127.0.0.1:8000/api/addcourier?billid="+billid+"&awb="+awb,
+                url: "/api/addcourier?billid="+billid+"&awb="+awb,
                 success:function(data){
 
                 // $('#billsselect').html(data["data"]);
@@ -161,24 +177,120 @@
             loadCourierData(billid);
         }
 
+        function deletebill(id)
+        {
+            $.ajax({
+                type: 'GET',
+                url: "/api/deletebill?billid="+id,
+                success:function(data){
+
+                // $('#billsselect').html(data["data"]);
+                 console.log(data["message"]);
+
+                 Toastify({
+                    text: data["message"],
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    }
+                }).showToast();
+
+                }
+            });
+            loadBillData();
+            loadCourierData(null);
+        }
+
+        function exportbill(id)
+        {
+            // $.ajax({
+            //     type: 'GET',
+            //     url: "/api/export?billid="+id,
+            //     success:function(data){
+            //         console.log(data["data"]);
+            //     // $('#billsselect').html(data["data"]);
+            //      console.log(data["message"]);
+
+            //      Toastify({
+            //         text: data["message"],
+            //         className: "info",
+            //         style: {
+            //             background: "linear-gradient(to right, #00b09b, #96c93d)",
+            //         }
+            //     }).showToast();
+
+            //     }
+            // });
+
+            var w=window.open("/api/export?billid="+id, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=50,left=1000,width=50,height=50");
+
+            loadBillData();
+            loadCourierData(null);
+        }
+
+
+        function getcourierstatus(cid)
+        {
+            if(cid.length>=6)
+            {
+            $.ajax({
+                type: 'GET',
+                url: "/api/isCourierExists?cid="+cid,
+                success:function(data){
+                if(data["data"])
+                {
+                    $('#couriersts').removeClass().addClass('fa-solid fa-circle-xmark redtick');
+                }
+                else{
+                    $('#couriersts').removeClass().addClass('fa-solid fa-circle-check greentick');
+                }
+
+                 console.log(data["message"]);
+                }
+            });
+            }
+        }
 
         $(document).ready(function(){
 
             // $("#getcourierdata").click(function(){
             // $.ajax({
             //     type: 'GET',
-            //     url: "http://127.0.0.1:8000/api/getcourier?billid=1",
+            //     url: "/api/getcourier?billid=1",
             //     success:function(data){
             //     $('#courierdatatable').html(data["data"]);
             //      console.log(data["message"]);
             //     }
             // });
-
-            loadCourierData(null);
             loadBillData();
+            loadCourierData(null);
+
         return false;
         });
 
+
+
+    //   google.charts.load('current', {'packages':['table']});
+    //   google.charts.setOnLoadCallback(drawTable);
+
+    //   function drawTable() {
+    //     var data = new google.visualization.DataTable();
+    //     data.addColumn('number', 'SI.NO');
+    //     data.addColumn('string', 'ID');
+    //     data.addColumn('string', 'Date');
+    //     data.addColumn('number', 'Amount');
+    //     data.addColumn('string', 'From');
+    //     data.addColumn('string', 'To');
+    //     data.addRows([
+    //       [1,  "521234", "02-06-2000",100,"Vizag","Vijayawada"],
+    //       [2,  "521234", "02-06-2000",69,"Tiruvuru","Vijayawada"],
+    //       [3,  "521234", "02-06-2000",50,"Kuppam","Vijayawada"]
+    //     ]);
+
+    //     var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    //     table.draw(data, {showRowNumber: false, width: '100%', height: '100%'});
+    //   }
     </script>
 
 </body>
