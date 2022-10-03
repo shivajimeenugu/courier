@@ -31,7 +31,7 @@
                                 <h6 class="col align-self-start" id="billtitle"></h6>
                                 <div class="col d-flex flex-row-reverse">
                                     <i class="fa-solid fa-trash  m-1 optionhoverred" onclick="deletebill(document.getElementById('billsselect').value)"></i>
-                                    <i class="fa-solid fa-download m-1 optionhoverblue" onclick="location.href='{{ config('app.apiurl') }}export?billid='+document.getElementById('billsselect');"></i>
+                                    <i class="fa-solid fa-download m-1 optionhoverblue" onclick="location.href='{{ config('app.apiurl') }}export?billid='+document.getElementById('billsselect').value;"></i>
                                 </div>
 
                     </div>
