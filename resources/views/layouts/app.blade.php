@@ -114,7 +114,7 @@
               {
                 $.ajax({
                 type: 'GET',
-                url: "/api/createbill?billname="+billname,
+                url: "{{ config('app.apiurl') }}createbill?billname="+billname,
                 success:function(data){
                 // $('#courierdatatable').html(data["data"]);
                  console.log(data["message"]);
@@ -129,7 +129,7 @@
             else{
             $.ajax({
                 type: 'GET',
-                url: "/api/getcourier?billid="+id,
+                url: "{{ config('app.apiurl') }}getcourier?billid="+id,
                 success:function(data){
                     $('#billtitle').html(data["message"]);
                 $('#courierdatatable').html(data["data"]);
@@ -143,7 +143,7 @@
         {
             $.ajax({
                 type: 'GET',
-                url: "/api/getbills",
+                url: "{{ config('app.apiurl') }}getbills",
                 success:function(data){
 
                 $('#billsselect').html(data["data"]);
@@ -158,7 +158,7 @@
             // alert(billid+"---"+awb)
             $.ajax({
                 type: 'GET',
-                url: "/api/addcourier?billid="+billid+"&awb="+awb,
+                url: "{{ config('app.apiurl') }}addcourier?billid="+billid+"&awb="+awb,
                 success:function(data){
 
                 // $('#billsselect').html(data["data"]);
@@ -181,7 +181,7 @@
         {
             $.ajax({
                 type: 'GET',
-                url: "/api/deletebill?billid="+id,
+                url: "{{ config('app.apiurl') }}deletebill?billid="+id,
                 success:function(data){
 
                 // $('#billsselect').html(data["data"]);
@@ -222,7 +222,7 @@
             //     }
             // });
 
-            var w=window.open("/api/export?billid="+id, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=50,left=1000,width=50,height=50");
+            var w=window.open("{{ config('app.apiurl') }}export?billid="+id, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=50,left=1000,width=50,height=50");
 
             loadBillData();
             loadCourierData(null);
@@ -235,7 +235,7 @@
             {
             $.ajax({
                 type: 'GET',
-                url: "/api/isCourierExists?cid="+cid,
+                url: "{{ config('app.apiurl') }}isCourierExists?cid="+cid,
                 success:function(data){
                 if(data["data"])
                 {
