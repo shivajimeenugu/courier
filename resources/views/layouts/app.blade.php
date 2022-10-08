@@ -171,6 +171,7 @@
                         background: "linear-gradient(to right, #00b09b, #96c93d)",
                     }
                 }).showToast();
+                document.getElementById('courierIdEntered').value="";
                 loadCourierData(billid);
                 }
             });
