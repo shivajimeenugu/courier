@@ -198,6 +198,9 @@
 
         function deletebill(id)
         {
+            if(confirm("Are you sure to delete this bill?"))
+            {
+
             $.ajax({
                 type: 'GET',
                 url: "{{ config('app.apiurl') }}deletebill?billid="+id,
@@ -218,6 +221,7 @@
             });
             loadBillData();
             loadCourierData(null);
+            }
         }
 
         function exportbill(id)
