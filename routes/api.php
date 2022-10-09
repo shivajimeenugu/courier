@@ -26,5 +26,8 @@ Route::get('/createbill',[App\Http\Controllers\HomeController::class, 'CreateBil
 Route::get('/deletebill',[App\Http\Controllers\HomeController::class, 'DeteteBill']);
 Route::get('/export',[App\Http\Controllers\HomeController::class, 'export']);
 Route::get('/isCourierExists',[App\Http\Controllers\HomeController::class, 'isCourierExists']);
+Route::get('/addcourierauto',[App\Http\Controllers\HomeController::class, 'AddCourierTOLatestBill']);
+
+//AddCourierTOLatestBill
 
 

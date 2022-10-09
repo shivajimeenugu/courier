@@ -108,6 +108,80 @@ class HomeController extends Controller
     }
 
 
+    public function AddCourierManual($awb,$bid)
+    {
+
+        $url = "https://apsrtclogistics.in/Cpservice_NEW/Api//manifest/GetShipmentByMultipleAwbNos/".$awb;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true );
+        // This is what solved the issue (Accepting gzip encoding)
+        curl_setopt($ch, CURLOPT_ENCODING, "gzip,deflate");
+        $response = curl_exec($ch);
+        curl_close($ch);
+        //echo $response;
+        $data = json_decode($response, true);
+        //print_r($data);
+
+
+        $cdate_temp=$data[0]["ShipmentDate"];
+        $date_and_time=explode("T",$cdate_temp);
+        $cdate=$date_and_time[0];
+
+        $camount=$data[0]["Total"];
+        $cfrom=$data[0]["SenderOriginCounterName"];
+        $cto=$data[0]["ReceiverOriginCounterName"];
+        $csender=$data[0]["SenderName"];
+        $creciver=$data[0]["ReceiverName"];
+
+        $data=[
+            "billid"=>$bid,
+            "cid"=>$awb,
+            "cdate"=>$cdate,
+            "amount"=>$camount,
+            "cfrom"=>$cfrom,
+            "cto"=>$cto,
+            "csender"=>$csender,
+            "creciver"=>$creciver
+        ];
+
+
+        $c=new couries;
+
+        if($c->where("cid",$data["cid"])->count()==1)
+        {
+            return response(["message"=>"Courier Allredy Exists"]);
+        }
+        else{
+            $c->billid=$data["billid"];
+            $c->cid=$data["cid"];
+            $c->cdate=$data["cdate"];
+            $c->amount=$data["amount"];
+            $c->cfrom=$data["cfrom"];
+            $c->cto=$data["cto"];
+            $c->csender=$data["csender"];
+            $c->creciver=$data["creciver"];
+            $c->save();
+            return response(["message"=>"Courier [".$data["cid"]."] Sucessfully Added"]);
+        }
+    }
+
+
+
+
+
+    public function AddCourierTOLatestBill(Request $req)
+    {
+        $b=new bill;
+        // dd($b->latest()->first()->id,$req);
+        $LatestBillId=$b->latest()->first()->id;
+        $awb=$req->cid;
+        return $this->AddCourierManual($awb,$LatestBillId);
+    }
+
     public function GetCourier(Request $req)
     {
         if($req->billid && $req->billid!="null" && $req->billid!=null)
@@ -273,7 +347,6 @@ class HomeController extends Controller
         else{
             return response(["message"=>"Select Bill From DropDown","data"=>null]);
         }
-
 
     }
 

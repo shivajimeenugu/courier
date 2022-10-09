@@ -196,6 +196,32 @@
             loadCourierData(billid);
         }
 
+        function addcourierauto(awb)
+        {
+            alert("You Rocked Shivaji.....");
+            /* $.ajax({
+                type: 'GET',
+                url: "{{ config('app.apiurl') }}addcourierauto?awb="+awb,
+                success:function(data){
+
+                // $('#billsselect').html(data["data"]);
+                 console.log(data["message"]);
+
+                 Toastify({
+                    text: data["message"],
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    }
+                }).showToast();
+                document.getElementById('courierIdEntered').value="";
+                loadCourierData(null);
+                }
+            });
+
+            loadCourierData(null); */
+        }
+
         function deletebill(id)
         {
             if(confirm("Are you sure to delete this bill?"))
