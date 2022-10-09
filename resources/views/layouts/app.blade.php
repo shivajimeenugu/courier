@@ -198,7 +198,7 @@
 
         function addcourierauto(awb)
         {
-            alert("You Rocked Shivaji.....");
+            alert("You Rocked Shivaji"+awb);
             /* $.ajax({
                 type: 'GET',
                 url: "{{ config('app.apiurl') }}addcourierauto?awb="+awb,
