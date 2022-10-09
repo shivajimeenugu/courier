@@ -37,10 +37,25 @@
     }
 
 </style>
+<style>
+
+    .no-js #loader { display: none;  }
+    .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+    .se-pre-con {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url({{asset("js/loader.gif")}}) center no-repeat #fff;
+    }
+    </style>
 
 </head>
 <body>
     <div id="app">
+        <div class="se-pre-con"></div>
 
 
         <nav class="navbar  navbar-expand-md navbar-light bg-white shadow-sm">
@@ -141,6 +156,7 @@
 
         function loadBillData()
         {
+            $(".se-pre-con").fadeIn("slow");
             $.ajax({
                 type: 'GET',
                 url: "{{ config('app.apiurl') }}getbills",
@@ -148,6 +164,7 @@
 
                 $('#billsselect').html(data["data"]);
                  console.log(data["message"]);
+                 $(".se-pre-con").fadeOut("slow");
                 }
             });
         }
