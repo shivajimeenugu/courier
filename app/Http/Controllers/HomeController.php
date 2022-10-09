@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Storage;
+
 
 use App\Models\bill;
 use App\Models\couries;
@@ -179,7 +181,9 @@ class HomeController extends Controller
         // dd($b->latest()->first()->id,$req);
         $LatestBillId=$b->latest()->first()->id;
         $awb=$req->cid;
-        return $this->AddCourierManual($awb,$LatestBillId);
+        Storage::put('public/des.txt', $req->cid);
+        // return $this->AddCourierManual($awb,$LatestBillId);
+        return response(["message"=>"tested"]);
     }
 
     public function GetCourier(Request $req)
